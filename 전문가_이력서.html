@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전문가 이력서 - 김윤회</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', '맑은 고딕', sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 210mm;
+            margin: 20px auto;
+            padding: 40px 50px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* 인쇄 시 스타일 */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            body {
+                background: white !important;
+            }
+            .container {
+                margin: 0;
+                padding: 20px 30px;
+                box-shadow: none;
+                max-width: 100%;
+                background: white !important;
+            }
+            th {
+                background: #f8f9fa !important;
+            }
+            .note-section {
+                background: #fafafa !important;
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 24pt;
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #2c3e50;
+            letter-spacing: 8px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-size: 13pt;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 500;
+            color: #2c3e50;
+            width: 120px;
+        }
+        
+        .career-header {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .career-position {
+            color: #666;
+            font-size: 10pt;
+            margin-bottom: 10px;
+        }
+        
+        .career-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .career-list li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 6px;
+        }
+        
+        .career-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .seminar-table th:first-child {
+            width: 200px;
+        }
+        
+        .note-section {
+            background: #fafafa;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+        
+        .signature-area {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+        }
+        
+        .signature-date {
+            font-size: 12pt;
+            margin-bottom: 25px;
+        }
+        
+        .signature-name {
+            font-size: 13pt;
+            font-weight: 600;
+        }
+        
+        .signature-seal {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #c0392b;
+            border-radius: 50%;
+            line-height: 46px;
+            text-align: center;
+            color: #c0392b;
+            font-size: 11pt;
+            font-weight: 700;
+            margin-left: 10px;
+            vertical-align: middle;
+            letter-spacing: -1px;
+        }
+        
+        .tech-badge {
+            display: inline-block;
+            background: #ecf0f1;
+            padding: 3px 10px;
+            border-radius: 3px;
+            margin: 2px 3px 2px 0;
+            font-size: 10pt;
+            border: 1px solid #bdc3c7;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>전 문 가  이 력 서</h1>
+        
+        <!-- 1. 인적 사항 -->
+        <div class="section">
+            <div class="section-title">1. 인적 사항</div>
+            <table>
+                <tr>
+                    <th>성 명</th>
+                    <td>김윤회</td>
+                </tr>
+                <tr>
+                    <th>소 속</th>
+                    <td>(주)한슬 기업부설연구소</td>
+                </tr>
+                <tr>
+                    <th>직 위</th>
+                    <td>주임연구원</td>
+                </tr>
+                <tr>
+                    <th>연락처</th>
+                    <td>010-2804-3441</td>
+                </tr>
+                <tr>
+                    <th>이메일</th>
+                    <td>yoon-whoi.kim@hansl.com</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- 2. 학력 사항 -->
+        <div class="section">
+            <div class="section-title">2. 학력 사항</div>
+            <table>
+                <tr>
+                    <th>졸업일자</th>
+                    <td>2019.02</td>
+                </tr>
+                <tr>
+                    <th>학교 및 전공</th>
+                    <td>울산과학기술원(UNIST) 컴퓨터공학과</td>
+                </tr>
+                <tr>
+                    <th>학위</th>
+                    <td>학사 졸업</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- 3. 주요 경력 사항 -->
+        <div class="section">
+            <div class="section-title">3. 주요 경력 사항</div>
+            <div style="padding: 15px; border: 1px solid #ddd;">
+                <div class="career-header">(주)한슬 기업부설연구소 (2019.11 ~ 현재)</div>
+                <div class="career-position">직위: 주임연구원</div>
+                <ul class="career-list">
+                    <li>STM32 시리즈 기반 산업용 임베디드 제어 시스템 펌웨어 개발</li>
+                    <li>STM32 Cube IDE를 활용한 하드웨어 추상화 계층(HAL) 설계 및 최적화</li>
+                    <li>센서 데이터 수집을 위한 고정밀 ADC 계측 및 신호 처리 로직 구현</li>
+                    <li>임베디드 시스템 연동용 윈도우/웹 통합 관제 소프트웨어 개발</li>
+                    <li>산업용 장비 인터페이스(UART, CAN, I2C, SPI) 통신 프로토콜 설계</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 4. 전문 분야 및 기술 역량 -->
+        <div class="section">
+            <div class="section-title">4. 전문 분야 및 기술 역량</div>
+            <table>
+                <tr>
+                    <th>Embedded Tool</th>
+                    <td>
+                        <span class="tech-badge">STM32 Cube IDE</span>
+                        <span class="tech-badge">STM32CubeMX</span>
+                        <span class="tech-badge">Keil MDK</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Microcontroller</th>
+                    <td>STM32 (Cortex-M 시리즈) 전반</td>
+                </tr>
+                <tr>
+                    <th>Analog Interface</th>
+                    <td>ADC(Analog-to-Digital Converter), 센서 데이터 필터링</td>
+                </tr>
+                <tr>
+                    <th>System Integration</th>
+                    <td>실시간 데이터 시각화 및 모니터링 시스템 구축</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- 5. 세미나 강의 주요 내용 -->
+        <div class="section">
+            <div class="section-title">5. 세미나 강의 주요 내용</div>
+            <p style="margin-bottom: 10px; font-weight: 500; color: #2c3e50;">
+                [주제] STM32 Cube IDE 실무 활용 및 아날로그 센서 데이터 계측
+            </p>
+            <table class="seminar-table">
+                <tr>
+                    <th>STM32 Cube IDE 실무 워크플로우</th>
+                    <td>이론 위주의 개념 설명보다 툴(IDE)의 효율적인 사용법 및 실무 디버깅 중심 교육</td>
+                </tr>
+                <tr>
+                    <th>아날로그 신호 계측 실습</th>
+                    <td>다양한 아날로그 센서의 특성과 연계된 ADC 설정 및 데이터 취득 방법론</td>
+                </tr>
+                <tr>
+                    <th>실전 코드 구현</th>
+                    <td>AI 도구 및 최신 개발 환경을 활용한 신속한 펌웨어 프로토타이핑 및 코드 생성 기법</td>
+                </tr>
+                <tr>
+                    <th>데이터 처리</th>
+                    <td>취득된 센서 데이터의 유효값 변환 및 하드웨어 제어 활용 방안</td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- 확인 문구 -->
+        <div style="text-align: center; margin-top: 40px; padding: 20px; font-size: 11pt;">
+            위 기재 사항이 사실과 다름없음을 확인합니다.
+        </div>
+        
+        <!-- 서명 영역 -->
+        <div class="signature-area">
+            <div class="signature-date">2025년 12월 26일</div>
+        </div>
+    </div>
+</body>
+</html>
+

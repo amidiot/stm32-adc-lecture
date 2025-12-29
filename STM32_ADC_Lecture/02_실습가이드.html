@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실습 가이드 - STM32 ADC 토양 수분 센서</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 11pt;
+            line-height: 1.8;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 210mm;
+            margin: 20px auto;
+            padding: 50px 60px;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+        
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            body { 
+                background: white !important; 
+            }
+            .container { 
+                margin: 0; 
+                padding: 30px 40px; 
+                box-shadow: none; 
+                max-width: 100%;
+                background: white !important;
+            }
+            .page-break { page-break-before: always; }
+            .info-box {
+                background: #e8f4f8 !important;
+                border-color: #b8d4e3 !important;
+            }
+            .info-box.warning {
+                background: #fff3e0 !important;
+                border-color: #ffcc80 !important;
+            }
+            .info-box.success {
+                background: #e8f5e9 !important;
+                border-color: #a5d6a7 !important;
+            }
+            th {
+                background: #f5f5f5 !important;
+            }
+            .step-list li {
+                background: #fafafa !important;
+            }
+            .step-list li::before {
+                background: #0f3460 !important;
+            }
+            .pinout-diagram {
+                background: #f8f9fa !important;
+            }
+            .pin-item {
+                background: white !important;
+            }
+            .code-block {
+                background: #1e1e1e !important;
+                color: #d4d4d4 !important;
+            }
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 22pt;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 12pt;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        h2 {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #16213e;
+            margin: 35px 0 20px 0;
+            padding-left: 15px;
+            border-left: 4px solid #0f3460;
+        }
+        
+        h3 {
+            font-size: 12pt;
+            font-weight: 600;
+            color: #0f3460;
+            margin: 25px 0 12px 0;
+        }
+        
+        p {
+            margin-bottom: 12px;
+        }
+        
+        .info-box {
+            background: #e8f4f8;
+            border: 1px solid #b8d4e3;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-box.warning {
+            background: #fff3e0;
+            border-color: #ffcc80;
+        }
+        
+        .info-box.success {
+            background: #e8f5e9;
+            border-color: #a5d6a7;
+        }
+        
+        .info-box h4 {
+            font-size: 11pt;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background: #f5f5f5;
+            font-weight: 500;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 20px 25px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 9.5pt;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+        
+        .code-block .comment { color: #6a9955; }
+        .code-block .keyword { color: #c586c0; }
+        .code-block .function { color: #dcdcaa; }
+        .code-block .string { color: #ce9178; }
+        .code-block .number { color: #b5cea8; }
+        .code-block .type { color: #4ec9b0; }
+        .code-block .macro { color: #569cd6; }
+        
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .step-list li {
+            counter-increment: step-counter;
+            padding: 15px 15px 15px 60px;
+            margin: 15px 0;
+            background: #fafafa;
+            border-radius: 8px;
+            position: relative;
+            border: 1px solid #e8e8e8;
+        }
+        
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: #0f3460;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 11pt;
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+        }
+        
+        .checklist li::before {
+            content: '☐';
+            position: absolute;
+            left: 0;
+            font-size: 14pt;
+        }
+        
+        .pinout-diagram {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .pin-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .pin-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+        
+        .pin-color.red { background: #e74c3c; }
+        .pin-color.black { background: #2c3e50; }
+        .pin-color.yellow { background: #f1c40f; }
+        
+        .arrow {
+            font-size: 20pt;
+            color: #999;
+        }
+        
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #999;
+            font-size: 9pt;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 STM32 ADC 실습 가이드</h1>
+        <p class="subtitle">NUCLEO-F401RE + Capacitive Soil Moisture Sensor v1.2</p>
+        
+        <!-- 1. 준비물 -->
+        <h2>1. 준비물 체크리스트</h2>
+        <ul class="checklist">
+            <li>NUCLEO-F401RE 개발 보드</li>
+            <li>Capacitive Soil Moisture Sensor v1.2</li>
+            <li>점퍼 와이어 (암-암) 3개</li>
+            <li>USB Micro-B 케이블</li>
+            <li>PC (STM32CubeIDE 설치 완료)</li>
+            <li>(선택) 물컵, 화분 - 테스트용</li>
+        </ul>
+        
+        <!-- 2. 하드웨어 연결 -->
+        <h2>2. 하드웨어 연결</h2>
+        
+        <h3>2.1 핀 연결표</h3>
+        <table>
+            <tr>
+                <th>센서 핀</th>
+                <th>색상</th>
+                <th>NUCLEO 핀</th>
+                <th>설명</th>
+            </tr>
+            <tr>
+                <td>VCC</td>
+                <td>빨강</td>
+                <td>3.3V (CN6)</td>
+                <td>전원 공급 (3.3V 권장)</td>
+            </tr>
+            <tr>
+                <td>GND</td>
+                <td>검정</td>
+                <td>GND (CN6)</td>
+                <td>그라운드</td>
+            </tr>
+            <tr>
+                <td>AOUT</td>
+                <td>노랑</td>
+                <td>A0 (CN8, PA0)</td>
+                <td>아날로그 출력 → ADC 입력</td>
+            </tr>
+        </table>
+        
+        <div class="pinout-diagram">
+            <div class="pin-item">
+                <div class="pin-color red"></div>
+                <span>VCC</span>
+            </div>
+            <span class="arrow">→</span>
+            <span><strong>3.3V</strong></span>
+            
+            <div style="width: 30px;"></div>
+            
+            <div class="pin-item">
+                <div class="pin-color black"></div>
+                <span>GND</span>
+            </div>
+            <span class="arrow">→</span>
+            <span><strong>GND</strong></span>
+            
+            <div style="width: 30px;"></div>
+            
+            <div class="pin-item">
+                <div class="pin-color yellow"></div>
+                <span>AOUT</span>
+            </div>
+            <span class="arrow">→</span>
+            <span><strong>A0 (PA0)</strong></span>
+        </div>
+        
+        <div class="info-box warning">
+            <h4>⚠️ 주의사항</h4>
+            <p>센서를 물에 담글 때 <strong>최대 침수선</strong>을 넘기지 마세요! 전자부품 영역이 물에 닿으면 고장날 수 있습니다.</p>
+        </div>
+        
+        <!-- 3. 프로젝트 생성 -->
+        <h2>3. STM32CubeIDE 프로젝트 생성</h2>
+        
+        <ol class="step-list">
+            <li>
+                <strong>STM32CubeIDE 실행</strong><br>
+                메뉴: File → New → STM32 Project
+            </li>
+            <li>
+                <strong>보드 선택</strong><br>
+                Board Selector 탭 클릭 → 검색창에 "NUCLEO-F401RE" 입력 → 선택 → Next
+            </li>
+            <li>
+                <strong>프로젝트 이름 입력</strong><br>
+                Project Name: <code>SoilMoistureSensor</code> (또는 원하는 이름)<br>
+                Finish 클릭
+            </li>
+            <li>
+                <strong>기본 설정 유지</strong><br>
+                "Initialize all peripherals with their default Mode?" → Yes 클릭
+            </li>
+        </ol>
+        
+        <!-- 4. CubeMX ADC 설정 -->
+        <h2>4. ADC 핀 설정 (CubeMX)</h2>
+        
+        <ol class="step-list">
+            <li>
+                <strong>.ioc 파일 열기</strong><br>
+                프로젝트 탐색기에서 <code>SoilMoistureSensor.ioc</code> 더블클릭
+            </li>
+            <li>
+                <strong>PA0 핀 설정</strong><br>
+                Pinout view에서 PA0 핀 클릭 → <strong>ADC1_IN0</strong> 선택
+            </li>
+            <li>
+                <strong>ADC 파라미터 확인</strong><br>
+                좌측 Categories → Analog → ADC1 클릭<br>
+                Parameter Settings 탭에서 아래 값 확인:
+            </li>
+        </ol>
+        
+        <table>
+            <tr>
+                <th>파라미터</th>
+                <th>설정값</th>
+                <th>설명</th>
+            </tr>
+            <tr>
+                <td>Resolution</td>
+                <td>12 bits</td>
+                <td>0~4095 범위</td>
+            </tr>
+            <tr>
+                <td>Scan Conversion Mode</td>
+                <td>Disabled</td>
+                <td>단일 채널 사용</td>
+            </tr>
+            <tr>
+                <td>Continuous Conversion Mode</td>
+                <td>Disabled</td>
+                <td>폴링 방식</td>
+            </tr>
+            <tr>
+                <td>Discontinuous Conversion Mode</td>
+                <td>Disabled</td>
+                <td>-</td>
+            </tr>
+        </table>
+        
+        <ol class="step-list" start="4">
+            <li>
+                <strong>코드 생성</strong><br>
+                메뉴: Project → Generate Code (또는 <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>G</kbd>)
+            </li>
+        </ol>
+        
+        <div class="info-box success">
+            <h4>✅ UART2는 이미 설정됨</h4>
+            <p>NUCLEO 보드 선택 시 ST-LINK 가상 COM 포트용 UART2가 자동으로 활성화됩니다. (PA2: TX, PA3: RX)</p>
+        </div>
+        
+        <div class="page-break"></div>
+        
+        <!-- 5. 코드 작성 -->
+        <h2>5. 코드 작성</h2>
+        
+        <h3>5.1 헤더 추가</h3>
+        <p><code>main.c</code> 파일에서 <code>/* USER CODE BEGIN Includes */</code> 섹션에 추가:</p>
+        
+        <div class="code-block">
+<span class="comment">/* USER CODE BEGIN Includes */</span>
+<span class="macro">#include</span> <span class="string">&lt;stdio.h&gt;</span>
+<span class="comment">/* USER CODE END Includes */</span>
+        </div>
+        
+        <h3>5.2 매크로 정의</h3>
+        <p><code>/* USER CODE BEGIN PD */</code> 섹션에 추가:</p>
+        
+        <div class="code-block">
+<span class="comment">/* USER CODE BEGIN PD */</span>
+<span class="comment">// 센서 캘리브레이션 값 (실측 후 조정 필요)</span>
+<span class="macro">#define</span> ADC_DRY   <span class="number">3100</span>  <span class="comment">// 공기 중 (건조)</span>
+<span class="macro">#define</span> ADC_WET   <span class="number">1500</span>  <span class="comment">// 물에 담근 상태 (습윤)</span>
+<span class="comment">/* USER CODE END PD */</span>
+        </div>
+        
+        <h3>5.3 함수 정의</h3>
+        <p><code>/* USER CODE BEGIN 0 */</code> 섹션에 추가:</p>
+        
+        <div class="code-block">
+<span class="comment">/* USER CODE BEGIN 0 */</span>
+
+<span class="comment">// printf 리다이렉트 (시리얼 출력용)</span>
+<span class="type">int</span> <span class="function">_write</span>(<span class="type">int</span> file, <span class="type">char</span> *ptr, <span class="type">int</span> len)
+{
+    <span class="function">HAL_UART_Transmit</span>(&huart2, (<span class="type">uint8_t</span>*)ptr, len, HAL_MAX_DELAY);
+    <span class="keyword">return</span> len;
+}
+
+<span class="comment">// ADC 값을 수분 퍼센트로 변환</span>
+<span class="type">int</span> <span class="function">getMoisturePercent</span>(<span class="type">uint32_t</span> adc_value)
+{
+    <span class="keyword">if</span> (adc_value >= ADC_DRY) <span class="keyword">return</span> <span class="number">0</span>;
+    <span class="keyword">if</span> (adc_value <= ADC_WET) <span class="keyword">return</span> <span class="number">100</span>;
+    
+    <span class="keyword">return</span> (ADC_DRY - adc_value) * <span class="number">100</span> / (ADC_DRY - ADC_WET);
+}
+
+<span class="comment">/* USER CODE END 0 */</span>
+        </div>
+        
+        <h3>5.4 메인 루프</h3>
+        <p><code>/* USER CODE BEGIN WHILE */</code> 섹션의 while 루프 안에 추가:</p>
+        
+        <div class="code-block">
+<span class="comment">/* USER CODE BEGIN WHILE */</span>
+<span class="keyword">while</span> (<span class="number">1</span>)
+{
+    <span class="comment">// 1. ADC 변환 시작</span>
+    <span class="function">HAL_ADC_Start</span>(&hadc1);
+    
+    <span class="comment">// 2. 변환 완료 대기</span>
+    <span class="keyword">if</span> (<span class="function">HAL_ADC_PollForConversion</span>(&hadc1, <span class="number">100</span>) == HAL_OK)
+    {
+        <span class="comment">// 3. ADC 값 읽기 (0 ~ 4095)</span>
+        <span class="type">uint32_t</span> adc_value = <span class="function">HAL_ADC_GetValue</span>(&hadc1);
+        
+        <span class="comment">// 4. 전압 계산 (V)</span>
+        <span class="type">float</span> voltage = adc_value * <span class="number">3.3f</span> / <span class="number">4095.0f</span>;
+        
+        <span class="comment">// 5. 수분 퍼센트 계산</span>
+        <span class="type">int</span> moisture = <span class="function">getMoisturePercent</span>(adc_value);
+        
+        <span class="comment">// 6. 시리얼로 출력</span>
+        <span class="function">printf</span>(<span class="string">"ADC: %4lu | Voltage: %.2fV | Moisture: %3d%%\r\n"</span>,
+               adc_value, voltage, moisture);
+    }
+    
+    <span class="comment">// 7. ADC 정지</span>
+    <span class="function">HAL_ADC_Stop</span>(&hadc1);
+    
+    <span class="comment">// 1초 대기</span>
+    <span class="function">HAL_Delay</span>(<span class="number">1000</span>);
+
+    <span class="comment">/* USER CODE END WHILE */</span>
+}
+        </div>
+        
+        <!-- 6. 빌드 및 실행 -->
+        <h2>6. 빌드 및 업로드</h2>
+        
+        <ol class="step-list">
+            <li>
+                <strong>빌드</strong><br>
+                메뉴: Project → Build Project (또는 <kbd>Ctrl</kbd>+<kbd>B</kbd>)<br>
+                Console에서 "Build Finished. 0 errors" 확인
+            </li>
+            <li>
+                <strong>USB 연결</strong><br>
+                NUCLEO 보드를 PC에 USB로 연결
+            </li>
+            <li>
+                <strong>업로드 (Debug)</strong><br>
+                메뉴: Run → Debug (또는 <kbd>F11</kbd>)<br>
+                처음 실행 시 ST-LINK 설정 창이 뜨면 기본값으로 OK
+            </li>
+            <li>
+                <strong>실행</strong><br>
+                Debug perspective에서 Resume 버튼 클릭 (또는 <kbd>F8</kbd>)
+            </li>
+        </ol>
+        
+        <!-- 7. 시리얼 모니터 -->
+        <h2>7. 시리얼 모니터 확인</h2>
+        
+        <h3>7.1 시리얼 터미널 설정</h3>
+        <table>
+            <tr>
+                <th>설정</th>
+                <th>값</th>
+            </tr>
+            <tr>
+                <td>Port</td>
+                <td>ST-LINK Virtual COM Port (COM번호 확인)</td>
+            </tr>
+            <tr>
+                <td>Baud Rate</td>
+                <td>115200</td>
+            </tr>
+            <tr>
+                <td>Data Bits</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>Parity</td>
+                <td>None</td>
+            </tr>
+            <tr>
+                <td>Stop Bits</td>
+                <td>1</td>
+            </tr>
+        </table>
+        
+        <h3>7.2 예상 출력</h3>
+        <div class="code-block" style="background: #1a1a2e;">
+ADC: 2856 | Voltage: 2.30V | Moisture:  15%
+ADC: 2834 | Voltage: 2.28V | Moisture:  17%
+ADC: 1823 | Voltage: 1.47V | Moisture:  80%
+ADC: 1654 | Voltage: 1.33V | Moisture:  90%
+        </div>
+        
+        <!-- 8. 캘리브레이션 -->
+        <h2>8. 센서 캘리브레이션</h2>
+        
+        <div class="info-box">
+            <h4>📊 캘리브레이션이 필요한 이유</h4>
+            <p>센서마다 특성이 조금씩 다르므로, 정확한 수분 측정을 위해 본인 센서의 건조/습윤 상태 ADC 값을 측정해야 합니다.</p>
+        </div>
+        
+        <ol class="step-list">
+            <li>
+                <strong>건조 상태 측정 (ADC_DRY)</strong><br>
+                센서를 공기 중에 두고 ADC 값 확인 → 보통 2800~3200 사이
+            </li>
+            <li>
+                <strong>습윤 상태 측정 (ADC_WET)</strong><br>
+                센서를 물에 담그고 ADC 값 확인 → 보통 1200~1600 사이<br>
+                <small>※ 침수선 넘지 않도록 주의!</small>
+            </li>
+            <li>
+                <strong>코드 수정</strong><br>
+                측정한 값으로 <code>#define ADC_DRY</code>와 <code>#define ADC_WET</code> 수정
+            </li>
+            <li>
+                <strong>재빌드 및 테스트</strong><br>
+                다시 빌드 후 다양한 수분 상태에서 테스트
+            </li>
+        </ol>
+        
+        <!-- 9. 문제 해결 -->
+        <h2>9. 문제 해결 (Troubleshooting)</h2>
+        
+        <table>
+            <tr>
+                <th style="width: 35%;">증상</th>
+                <th>해결 방법</th>
+            </tr>
+            <tr>
+                <td>ADC 값이 0만 나옴</td>
+                <td>센서 연결 확인 (VCC, GND, AOUT)<br>PA0 핀 ADC1_IN0으로 설정되었는지 확인</td>
+            </tr>
+            <tr>
+                <td>ADC 값이 4095만 나옴</td>
+                <td>센서 VCC가 3.3V에 연결되었는지 확인<br>GND 연결 확인</td>
+            </tr>
+            <tr>
+                <td>시리얼 출력 안 됨</td>
+                <td>COM 포트 번호 확인<br>Baud Rate 115200 확인<br>_write 함수 추가되었는지 확인</td>
+            </tr>
+            <tr>
+                <td>빌드 에러 (undefined reference)</td>
+                <td>stdio.h include 확인<br>huart2 변수가 main.c에 있는지 확인</td>
+            </tr>
+            <tr>
+                <td>값이 불안정하게 흔들림</td>
+                <td>HAL_Delay 시간 늘리기<br>여러 번 측정 후 평균값 사용</td>
+            </tr>
+        </table>
+        
+        <footer>
+            김윤회 | (주)한슬 기업부설연구소 | yoon-whoi.kim@hansl.com
+        </footer>
+    </div>
+</body>
+</html>
+
